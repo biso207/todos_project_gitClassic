@@ -12,7 +12,7 @@ try {
 }
 
 // stampa menù
-console.log("1) POST\n2) GET\n3) DELETE");
+console.log("1) POST\n2) GET\n3) DELETE\n4) STAMPA TUTTO");
 
 // input tastiera
 const read = readline.createInterface({
@@ -31,6 +31,9 @@ read.question("Operazione: ", (choice) => {
             break;
         case "3":
             deleteAzioni();
+            break;
+        case "4":
+            stampatutto();
             break;
         default:
             console.log("WRONG VALUE");
@@ -51,6 +54,8 @@ function createAzioni() {
             // aggiornamento del file json
             fs.writeFileSync("todos.json", JSON.stringify(data, null, 4), "utf8");
             console.log("Azione salvata con successo!");
+            console.log("Dati inseriti:");
+            console.log(JSON.stringify(data.actions[""+data.id-1],null,4));
             read.close();
         });
     });
@@ -81,3 +86,6 @@ function deleteAzioni() {
         read.close();
     });
 }
+function stampatutto() {
+    console.log(JSON.stringify(data,null,4));
+ }
