@@ -1,3 +1,6 @@
+// TODO: questo file è aggiornato al 2/4/2025 ed è funzionante.
+// Implementare la classe ToDo che permetta di creare un oggetto che rappresenti l'azione
+
 const fs = require("fs");
 const readline = require("readline");
 
