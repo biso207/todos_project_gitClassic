@@ -12,7 +12,7 @@ try {
 }
 
 // stampa menù
-console.log("1) POST\n2) GET\n3) DELETE\n4) STAMPA TUTTO");
+console.log("1) CREA\n2) VISUALIZZA\n3) ELIMINA\n0) ESCI\n");
 
 // input tastiera
 const read = readline.createInterface({
@@ -21,25 +21,29 @@ const read = readline.createInterface({
 });
 
 // scelta utente
-read.question("Operazione: ", (choice) => {
-    switch (choice) {
-        case "1":
-            createAzioni();
-            break;
-        case "2":
-            readAzioni();
-            break;
-        case "3":
-            deleteAzioni();
-            break;
-        case "4":
-            stampatutto();
-            break;
-        default:
-            console.log("WRONG VALUE");
-            read.close();
-    }
-});
+function menu() {
+    read.question("\nOperazione: ", (choice) => {
+        switch (choice) {
+            case "1":
+                createAzioni();
+                break;
+            case "2":
+                readAzioni();
+                break;
+            case "3":
+                deleteAzioni();
+                break;
+            case "0":
+                console.log("Arrivederci!");
+                read.close();
+                return;
+            default:
+                console.log("Scelta non valida, riprova.");
+                menu(); //fa da while dove quando choice è != da tutti i numeri continua a chiedere
+                return;
+        }
+    });
+}
 
 // metodo crea azioni
 function createAzioni() {
@@ -50,13 +54,13 @@ function createAzioni() {
 
             // incremento id
             data.id++;
+            console.log("ID assegnato: " + id);
 
             // aggiornamento del file json
-            fs.writeFileSync("todos.json", JSON.stringify(data, null, 4), "utf8");
+            updateJson();
+
             console.log("Azione salvata con successo!");
-            console.log("Dati inseriti:");
-            console.log(JSON.stringify(data.actions[""+data.id-1],null,4));
-            read.close();
+            menu(); // ritorna al menu principale
         });
     });
 }
@@ -65,7 +69,7 @@ function createAzioni() {
 function readAzioni() {
     console.log("Lista delle azioni salvate:");
     console.log(JSON.stringify(data.actions, null, 4));
-    read.close();
+    menu();
 }
 
 // metodo elimina azioni
@@ -78,14 +82,19 @@ function deleteAzioni() {
             data.id--;
 
             // aggiornamento del file json
-            fs.writeFileSync("todos.json", JSON.stringify(data, null, 4), "utf8");
+            updateJson();
+
             console.log("Azione eliminata con successo!");
         } else {
             console.log("ID non trovato!");
         }
-        read.close();
+        menu();
     });
 }
-function stampatutto() {
-    console.log(JSON.stringify(data,null,4));
- }
+
+// funzione per aggiornare il ToDo json
+function updateJson() {
+    fs.writeFileSync("todos.json", JSON.stringify(data, null, 4), "utf8");
+}
+
+menu(); // chiamata alla funzione menu per avviare il programma
