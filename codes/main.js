@@ -1,8 +1,6 @@
-// TODO: questo file è aggiornato al 2/4/2025 ed è funzionante.
-// Implementare la classe ToDo che permetta di creare un oggetto che rappresenti l'azione
-
 const fs = require("fs");
 const readline = require("readline");
+const ToDo = require("./ToDo.js");
 
 let data = { id: 0, actions: {} };
 
@@ -15,7 +13,7 @@ try {
 }
 
 // stampa menù
-console.log("1) CREA\n2) VISUALIZZA\n3) ELIMINA\n0) ESCI\n");
+console.log("1) CREA\n2) STAMPA AZIONI\n3) VISUALIZZA AZIONE\n4) ELIMINA\n0) ESCI\n");
 
 // input tastiera
 const read = readline.createInterface({
@@ -34,6 +32,9 @@ function menu() {
                 readAzioni();
                 break;
             case "3":
+                printToDo();
+                break;
+            case "4":
                 deleteAzioni();
                 break;
             case "0":
@@ -50,28 +51,54 @@ function menu() {
 
 // metodo crea azioni
 function createAzioni() {
-    read.question("Titolo: ", (titolo) => {
-        read.question("Descrizione: ", (descrizione) => {
-            let id = data.id; // recupero id
-            data.actions[id] = { id: id, title: titolo, description: descrizione }; // salvataggio azione
+    read.question("Titolo: ", (title) => {
+        read.question("Descrizione: ", (description) => {
+            let id = data.id; // Recupera il prossimo ID disponibile
+
+            // creazione oggetto classe ToDo
+            let task = new ToDo(id, title, description);
+
+            // salvataggio in data.actions con ID come chiave
+            data.actions[id] = task.toJSON();
 
             // incremento id
             data.id++;
-            console.log("ID assegnato: " + id);
 
-            // aggiornamento del file json
+            // aggiornamento JSON
             updateJson();
 
-            console.log("Azione salvata con successo!");
-            menu(); // ritorna al menu principale
+            console.log("Azione salvata con successo! ID assegnato: " + id);
+
+            // ritorno al menù
+            menu();
         });
     });
 }
 
-// metodo leggi azioni
+// funzione per stampare una singola azione dal JSON recuperata con l'ID
+function printToDo() {
+    read.question("ID del ToDo da visualizzare: ", (id) => {
+        let todo = data.actions[id]; // Recupera il ToDo dalla lista
+
+        if (todo) {
+            // creazione oggetto ToDO con valori recuperati
+            let todoObj = new ToDo(todo.id, todo.title, todo.description, todo.isCompleted);
+            console.log(JSON.stringify(todoObj.toJSON(), null, 4)); // stampa come JSON
+        } else {
+            console.log("ToDo non trovato!");
+        }
+
+        // ritorno al menù
+        menu();
+    });
+}
+
+// funzione per stampare tutte le azioni dal file JSON
 function readAzioni() {
     console.log("Lista delle azioni salvate:");
     console.log(JSON.stringify(data.actions, null, 4));
+
+    // ritorno al menù
     menu();
 }
 
@@ -79,25 +106,28 @@ function readAzioni() {
 function deleteAzioni() {
     read.question("ID da eliminare: ", (deleteId) => {
         if (data.actions[deleteId]) {
-            delete data.actions[deleteId];
+            delete data.actions[deleteId]; // elimina il todo
 
-            // decremento numero id
+            // decremento id
             data.id--;
 
-            // aggiornamento del file json
+            // aggiornamento JSON
             updateJson();
 
             console.log("Azione eliminata con successo!");
         } else {
             console.log("ID non trovato!");
         }
+
+        // ritorno al menù
         menu();
     });
 }
 
-// funzione per aggiornare il ToDo json
+// funzione per aggiornare il json
 function updateJson() {
     fs.writeFileSync("todos.json", JSON.stringify(data, null, 4), "utf8");
 }
 
-menu(); // chiamata alla funzione menu per avviare il programma
+// chiamata alla funzione menu per avviare il programma
+menu();
