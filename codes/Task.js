@@ -1,4 +1,4 @@
-class ToDo {
+class Task {
     #id;
     #title;
     #description;
@@ -35,4 +35,4 @@ class ToDo {
     }
 }
 
-module.exports = ToDo;
+module.exports = Task;
