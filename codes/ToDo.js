@@ -24,6 +24,7 @@ class ToDo {
     set description(description) { this.#description = description; }
     set isCompleted(completed) { this.#isCompleted = completed; }
 
+    // funzione per stampare le task
     toJSON() {
         return {
             id: this.#id,

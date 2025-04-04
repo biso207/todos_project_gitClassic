@@ -53,21 +53,19 @@ function menu() {
 function createAzioni() {
     read.question("Titolo: ", (title) => {
         read.question("Descrizione: ", (description) => {
-            let id = data.id; // Recupera il prossimo ID disponibile
+            // incremento id
+            data.id++; // globale
 
             // creazione oggetto classe ToDo
-            let task = new ToDo(id, title, description);
+            let task = new ToDo(data.id, title, description);
 
             // salvataggio in data.actions con ID come chiave
-            data.actions[id] = task.toJSON();
-
-            // incremento id
-            data.id++;
+            data.actions[data.id] = task.toJSON();
 
             // aggiornamento JSON
             updateJson();
 
-            console.log("Azione salvata con successo! ID assegnato: " + id);
+            console.log("Azione salvata con successo! ID assegnato: " + data.id);
 
             // ritorno al menù
             menu();
